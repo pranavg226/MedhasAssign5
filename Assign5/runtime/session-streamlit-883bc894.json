@@ -1,0 +1,25 @@
+{
+  "created_at": "2026-09-09T20:10:20.788685+00:00",
+  "sdk_session_id": "e912b529-5d51-48d1-babc-0e72152ec39d",
+  "session_id": "streamlit-883bc894",
+  "tool_events": [],
+  "turns": [
+    {
+      "content": "help me understand binary trees",
+      "role": "user"
+    },
+    {
+      "content": "Invalid API key \u00b7 Fix external API key",
+      "role": "assistant"
+    }
+  ],
+  "updated_at": "2026-09-09T20:10:22.407161+00:00",
+  "usage": {
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "input_tokens": 0,
+    "output_tokens": 0
+  },
+  "user_id": "student-demo"
+}

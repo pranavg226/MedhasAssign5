@@ -1,0 +1,2 @@
+[console_scripts]
+study-planner = study_planner_agent.cli:main

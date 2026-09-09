@@ -1,0 +1,77 @@
+[
+    {
+        "code": "CS201",
+        "title": "Data Structures",
+        "description": "Algorithms, lists, trees, graphs, and complexity analysis.",
+        "materials": [
+            "Week 1: Big-O notation and asymptotic analysis",
+            "Week 2: Arrays, linked lists, and stacks",
+            "Week 3: Queues, hash tables, and collision handling",
+            "Week 4: Trees, binary search trees, and tree traversal",
+            "Week 5: Graph representations and breadth-first search"
+        ],
+        "assignments": [
+            {
+                "name": "Problem Sets",
+                "weight": 25,
+                "score": 88,
+                "topic": "foundations"
+            },
+            {
+                "name": "Midterm",
+                "weight": 25,
+                "score": 78,
+                "topic": "trees and hashing"
+            },
+            {
+                "name": "Project",
+                "weight": 20,
+                "score": null,
+                "topic": "graphs"
+            },
+            {
+                "name": "Final Exam",
+                "weight": 30,
+                "score": null,
+                "topic": "comprehensive"
+            }
+        ]
+    },
+    {
+        "code": "STAT210",
+        "title": "Applied Statistics",
+        "description": "Probability, inference, regression, and communicating uncertainty.",
+        "materials": [
+            "Unit 1: Probability and random variables",
+            "Unit 2: Sampling distributions and the central limit theorem",
+            "Unit 3: Confidence intervals and hypothesis tests",
+            "Unit 4: Simple linear regression and residual analysis"
+        ],
+        "assignments": [
+            {
+                "name": "Labs",
+                "weight": 20,
+                "score": 92,
+                "topic": "data analysis"
+            },
+            {
+                "name": "Quizzes",
+                "weight": 15,
+                "score": 85,
+                "topic": "probability"
+            },
+            {
+                "name": "Midterm",
+                "weight": 25,
+                "score": 81,
+                "topic": "inference"
+            },
+            {
+                "name": "Final Exam",
+                "weight": 40,
+                "score": null,
+                "topic": "regression"
+            }
+        ]
+    }
+]

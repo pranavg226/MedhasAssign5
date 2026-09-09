@@ -1,0 +1,119 @@
+# Study Planner Claude Agent
+
+This project is a domain-specific study-planning agent built with the official
+Anthropic Claude Agent SDK for Python. It answers study questions from a local
+course catalog, calculates weighted grade projections, preserves conversation
+state, blocks unapproved tools, and reports estimated token costs.
+
+## Setup
+
+Requirements: Python 3.10+ and [uv](https://docs.astral.sh/uv/).
+
+```bash
+uv sync --extra dev
+cp .env.example .env
+export ANTHROPIC_API_KEY="your-key"
+```
+
+Install the Streamlit interface with the optional UI dependency:
+
+```bash
+uv sync --extra ui
+uv run streamlit run streamlit_app.py
+```
+
+The app includes planner chat, searchable course materials, grade projection,
+session controls, and visible governance and budget status.
+
+The SDK package bundles the Claude Code CLI. The API key is required only for
+live agent requests, not for the offline tests or demo.
+
+The key must be a newly generated, active Anthropic key in `.env`; do not use
+keys pasted into chat or source files. Restart Streamlit after changing `.env`.
+
+## Run
+
+Run the deterministic demonstration first:
+
+```bash
+uv run study-planner --demo
+```
+
+It invokes both custom tools, shows a persisted session design, denies `Bash`,
+and reports an estimated cost. A live one-shot request is:
+
+```bash
+uv run study-planner --session alice-cs201 --prompt "Find the tree topics and make me a two-day plan"
+```
+
+Use the same `--session` value for later turns. The interactive mode is:
+
+```bash
+uv run study-planner --session alice-cs201
+```
+
+## Custom tools
+
+The in-process MCP server `study_planner` registers two typed tools:
+
+- `search_course_materials(query, course_code)`: searches `data/courses.json`.
+- `project_course_grade(course_code, projected_scores)`: calculates weighted
+  completed work and projected course totals.
+
+The plain Python implementations are in `tools.py`, while the SDK wrappers
+use `@tool` and `create_sdk_mcp_server`. This keeps tool behavior testable
+without making network calls.
+
+## Reusable skill
+
+`skill.py` exports `study_planning_skill`, its reusable instructions, and
+`build_study_request()`. Another agent can import these instructions without
+depending on the CLI or session manager.
+
+## Sessions and persistence
+
+Each user-provided session ID maps to `runtime/session-<id>.json`. The file
+stores the local session ID, authenticated user ID, SDK session ID for resume,
+turn history, tool events, usage totals, estimated cost, and timestamps. Writes
+are atomic. Metrics are appended to `runtime/metrics.jsonl`. Runtime files are
+ignored by Git.
+
+The local session ID remains stable across restarts. If the SDK returns a
+provider session ID, it is stored and passed back as `resume` on the next turn.
+
+## Governance
+
+Governance is enforced in `governance.py` and `agent.py`:
+
+- Models must be `claude-sonnet-4-5` or `claude-haiku-4-5`.
+- Only the two `study_planner` MCP tools are approved.
+- User identity must match `STUDY_AGENT_USER_ID`.
+- `Bash`, `Write`, `Edit`, `WebFetch`, and `WebSearch` are disallowed.
+- A `PreToolUse` hook deterministically denies any tool outside the allowlist.
+
+The demo proves the denial with `Bash` and prints the SDK hook decision.
+
+## Spend controls
+
+Configuration is environment-driven:
+
+- `STUDY_AGENT_MAX_TURNS` limits agent turns.
+- `STUDY_AGENT_MAX_TOKENS` rejects a run after normalized usage exceeds the cap.
+- `STUDY_AGENT_SESSION_BUDGET_USD` is passed to the SDK as `max_budget_usd`
+  and checked again against accumulated session usage.
+- `metrics.jsonl` records model, input/output/cache tokens, estimated cost,
+  provider-reported cost when available, and permission denials.
+
+Costs are estimates from configured per-million-token prices unless the SDK
+returns `total_cost_usd`; they are not a billing statement.
+
+## Tests and checks
+
+```bash
+uv run pytest
+uv run ruff check src tests
+```
+
+The tests are offline and cover both tools, skill export, session round trips,
+user/model governance, blocked spend, and usage normalization. Live requests
+require an API key and network access.
